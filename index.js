@@ -34,6 +34,27 @@ var DB = {
             year: 1985,
             price: 20
         },
+    ],
+
+    users: [
+        {
+            id: 1,
+            name: 'Rogerio',
+            email: 'rogerio@teste.com',
+            password: '12345',
+        },
+        {
+            id: 2,
+            name: 'Maria',
+            email: 'maria@teste.com',
+            password: '654321',
+        },
+        {
+            id: 3,
+            name: 'João',
+            email: 'joao@teste.com',
+            password: '69870',
+        },
     ]
 }
 
@@ -119,6 +140,34 @@ app.put('/game/:id', (req, res) => {
         }else{
             res.sendStatus(404)
         }
+    }
+})
+
+app.post('/auth', (req, res) => {
+    var {email, password} = req.body
+
+    if (email != undefined) {
+        var user = DB.users.find(u => u.email == email)
+
+        if (user != undefined) {
+            if (user.password == password) {
+                res.status(200)
+                res.json({token: 'TOKEN FALSO'})
+            }else{
+                res.status(401)
+            res.json({error: 'informação invalida'})
+            }
+
+
+        }else{
+            res.status(404)
+            res.json({error: 'O email enviado não existe na basa de dados'})
+        }
+
+
+    }else{
+        res.status(400)
+        res.json({error: 'O email enviado é invalido'})
     }
 })
 
