@@ -1,6 +1,15 @@
+
+//variaveis de ambiente
+require('dotenv').config();
+const dotenv = require('dotenv')
+dotenv.config()
+
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const jwt = require('jsonwebtoken')
+
+const JWTSecret = process.env.JWT_PASSWORD
 
 app.use(cors())
 
@@ -151,8 +160,17 @@ app.post('/auth', (req, res) => {
 
         if (user != undefined) {
             if (user.password == password) {
-                res.status(200)
-                res.json({token: 'TOKEN FALSO'})
+
+                jwt.sign({id: user.id, email: user.email}, JWTSecret,{expiresIn: '48h'},(error, token) => {
+                    if (error) {
+                        res.status(400)
+                        res.json({error: 'falha interna'})
+                    }else{
+                        res.status(200)
+                        res.json({token: token})
+                    }
+                })
+
             }else{
                 res.status(401)
             res.json({error: 'informação invalida'})
@@ -173,6 +191,6 @@ app.post('/auth', (req, res) => {
 
 
 
-app.listen(3000, () => {
-    console.log('API rodando')
+app.listen(process.env.PORT, () => {
+    console.log(`API rodando ${process.env.PORT}`)
 })
