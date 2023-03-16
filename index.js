@@ -16,6 +16,35 @@ app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+function auth(req, res, next) {
+    
+    const authToken = req.headers['authorization']
+
+    if (authToken != undefined) {
+        
+        const bearer = authToken.split(' ')
+        var token = bearer[1]
+
+        jwt.verify(token, JWTSecret, (error, data) =>{
+            if (error) {
+                res.status(401)
+                res.json({error: 'Token invalido'})
+            }else{
+                res.token = token
+                req.loggedUser = {id: data.id, email: data.email}
+                req.empresa = 'Olá mundo'
+                next()
+            }
+        })
+    }else{
+        res.status(401)
+        res.json({error: 'token invalido'})
+    }
+
+    console.log(authToken)
+    next()
+}
+
 
 var DB = {
     games: [
@@ -67,12 +96,12 @@ var DB = {
     ]
 }
 
-app.get('/games', (req, res) => {
+app.get('/games',auth, (req, res) => {
     res.statusCode = 200
     res.json(DB.games)
 })
 
-app.get('/game/:id', (req, res) => {
+app.get('/game/:id', auth,(req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     }else{
@@ -90,7 +119,7 @@ app.get('/game/:id', (req, res) => {
 })
 
 
-app.post('/game', (req, res) => {
+app.post('/game', auth,(req, res) => {
     var {title, year, price} = req.body
 
     DB.games.push({
@@ -103,7 +132,7 @@ app.post('/game', (req, res) => {
     res.sendStatus(200)
 })
 
-app.delete('/game/:id', (req, res) => {
+app.delete('/game/:id', auth,(req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     }else{
@@ -161,7 +190,7 @@ app.post('/auth', (req, res) => {
         if (user != undefined) {
             if (user.password == password) {
 
-                jwt.sign({id: user.id, email: user.email}, JWTSecret,{expiresIn: '48h'},(error, token) => {
+                jwt.sign({id: user.id, email: user.email}, JWTSecret,{expiresIn: '300h'},(error, token) => {
                     if (error) {
                         res.status(400)
                         res.json({error: 'falha interna'})
