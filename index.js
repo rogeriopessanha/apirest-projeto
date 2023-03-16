@@ -41,7 +41,7 @@ function auth(req, res, next) {
         res.json({error: 'token invalido'})
     }
 
-    console.log(authToken)
+
     next()
 }
 
