@@ -10,11 +10,11 @@
     
     <h1>Loja de games</h1>
 
-    <h2>Login</h2>
+    <!-- <h2>Login</h2>
     <input type="text" name="email" id="email
     " placeholder="Seu email"> <br>
     <input type="text" name="password" id="password" placeholder="*******">
-    <button onclick="login()">Entrar</button>
+    <button onclick="login()">Entrar</button> -->
 
     <hr>
 
@@ -40,34 +40,34 @@
 
 </body>
 
-
 <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+
 
 <script>
     
 
-function login() {
-    var emailField = document.getElementById('email')
-    var passwordField = document.getElementById('password')
+// function login() {
+//     var emailField = document.getElementById('email')
+//     var passwordField = document.getElementById('password')
 
-    var email = emailField.value
-    var password = passwordField.value
+//     var email = emailField.value
+//     var password = passwordField.value
 
-    axios.post('http://localhost:3000/auth', {
-        email,
-        password
-    })
-    .then(res => {
-        alert('LOGADO')
-    })
-    .catch(error => {
-        alert('ERRO AO FAZER O LOGIN')
-    })
-}
+//     axios.post('http://localhost:3000/auth', {
+//         email,
+//         password
+//     })
+//     .then(res => {
+//         alert('LOGADO')
+//     })
+//     .catch(error => {
+//         alert('ERRO AO FAZER O LOGIN')
+//     })
+// }
 
 var axiosConfig = {
     headers: {
-        Authorization: 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJtYXJpYUB0ZXN0ZS5jb20iLCJpYXQiOjE2Nzg4MzE5NzgsImV4cCI6MTY3OTAwNDc3OH0.RIn36Mpoz6JXLj4O0kW55fIfLoN8VkI5d1BltOlbGxM'
+        Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJtYXJpYUB0ZXN0ZS5jb20iLCJpYXQiOjE2Nzg5MzMxNjYsImV4cCI6MTY4MDAxMzE2Nn0.shpRlpSBIza73FNR1prN0hyQQwYFs6wrVQhEqOhDyuc"
     }
 }
 
@@ -157,7 +157,7 @@ axios.get('http://localhost:3000/games', axiosConfig)
         item.setAttribute('data-year', game.year)
         item.setAttribute('data-price', game.price)
 
-        item.innerHTML= game.id + ' - ' + game.title + ' - R$ ' + game.price
+        item.innerHTML = game.id + ' - ' + game.title + ' - R$ ' + game.price
 
         var deleteBtn = document.createElement('button')
         deleteBtn.innerHTML = 'Deletar'
@@ -174,8 +174,9 @@ axios.get('http://localhost:3000/games', axiosConfig)
 
 
 
-        list.appendChild(deleteBtn)
-        list.appendChild(editBtn)
+        item.appendChild(deleteBtn)
+        item.appendChild(editBtn)
+
         list.appendChild(item)
     });
 })
@@ -184,8 +185,5 @@ axios.get('http://localhost:3000/games', axiosConfig)
 })
 </script>
 
-
-
-<!-- <script src="script.js"></script> -->
 
 </html>

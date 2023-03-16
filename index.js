@@ -17,32 +17,30 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 function auth(req, res, next) {
-    
+
     const authToken = req.headers['authorization']
 
     if (authToken != undefined) {
-        
+
         const bearer = authToken.split(' ')
         var token = bearer[1]
 
-        jwt.verify(token, JWTSecret, (error, data) =>{
+        jwt.verify(token, JWTSecret, (error, data) => {
             if (error) {
                 res.status(401)
-                res.json({error: 'Token invalido'})
-            }else{
+                res.json({ error: 'Token invalido' })
+            } else {
+
                 res.token = token
-                req.loggedUser = {id: data.id, email: data.email}
+                req.loggedUser = { id: data.id, email: data.email }
                 req.empresa = 'Olá mundo'
                 next()
             }
         })
-    }else{
+    } else {
         res.status(401)
-        res.json({error: 'token invalido'})
+        res.json({ error: 'token invalido' })
     }
-
-
-    next()
 }
 
 
@@ -96,15 +94,15 @@ var DB = {
     ]
 }
 
-app.get('/games',auth, (req, res) => {
+app.get('/games', auth, (req, res) => {
     res.statusCode = 200
-    res.json(DB.games)
+    res.json({ empresa: req.empresa, user: req.loggedUser, games: DB.games });
 })
 
-app.get('/game/:id', auth,(req, res) => {
+app.get('/game/:id', auth, (req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
-    }else{
+    } else {
         var id = parseInt(req.params.id)
 
         var game = DB.games.find(g => g.id == id)
@@ -112,15 +110,15 @@ app.get('/game/:id', auth,(req, res) => {
         if (game != undefined) {
             res.statusCode = 200
             res.json(game)
-        }else{
+        } else {
             res.sendStatus(404)
         }
     }
 })
 
 
-app.post('/game', auth,(req, res) => {
-    var {title, year, price} = req.body
+app.post('/game', auth, (req, res) => {
+    var { title, year, price } = req.body
 
     DB.games.push({
         id: 2323,
@@ -132,18 +130,18 @@ app.post('/game', auth,(req, res) => {
     res.sendStatus(200)
 })
 
-app.delete('/game/:id', auth,(req, res) => {
+app.delete('/game/:id', auth, (req, res) => {
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
-    }else{
+    } else {
         var id = parseInt(req.params.id)
 
         var index = DB.games.findIndex(g => g.id == id)
 
         if (index == -1) {
             res.sendStatus(404)
-        }else{
-            DB.games.splice(index,1)
+        } else {
+            DB.games.splice(index, 1)
             res.sendStatus(200)
         }
     }
@@ -153,13 +151,13 @@ app.put('/game/:id', (req, res) => {
 
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
-    }else{
+    } else {
         var id = parseInt(req.params.id)
 
         var game = DB.games.find(g => g.id == id)
 
         if (game != undefined) {
-            var {title, year, price} = req.body
+            var { title, year, price } = req.body
 
             if (title != undefined) {
                 game.title = title
@@ -175,46 +173,48 @@ app.put('/game/:id', (req, res) => {
 
             res.sendStatus(200)
 
-        }else{
+        } else {
             res.sendStatus(404)
         }
     }
 })
 
 app.post('/auth', (req, res) => {
-    var {email, password} = req.body
+
+    var { email, password } = req.body
 
     if (email != undefined) {
+
         var user = DB.users.find(u => u.email == email)
 
         if (user != undefined) {
             if (user.password == password) {
 
-                jwt.sign({id: user.id, email: user.email}, JWTSecret,{expiresIn: '300h'},(error, token) => {
+                jwt.sign({ id: user.id, email: user.email }, JWTSecret, { expiresIn: '300h' }, (error, token) => {
                     if (error) {
                         res.status(400)
-                        res.json({error: 'falha interna'})
-                    }else{
+                        res.json({ error: 'falha interna' })
+                    } else {
                         res.status(200)
-                        res.json({token: token})
+                        res.json({ token: token })
                     }
                 })
 
-            }else{
+            } else {
                 res.status(401)
-            res.json({error: 'informação invalida'})
+                res.json({ error: 'informação invalida' })
             }
 
 
-        }else{
+        } else {
             res.status(404)
-            res.json({error: 'O email enviado não existe na basa de dados'})
+            res.json({ error: 'O email enviado não existe na basa de dados' })
         }
 
 
-    }else{
+    } else {
         res.status(400)
-        res.json({error: 'O email enviado é invalido'})
+        res.json({ error: 'O email enviado é invalido' })
     }
 })
 
