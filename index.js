@@ -31,9 +31,8 @@ function auth(req, res, next) {
                 res.json({ error: 'Token invalido' })
             } else {
 
-                res.token = token
+                req.token = token
                 req.loggedUser = { id: data.id, email: data.email }
-                req.empresa = 'Olá mundo'
                 next()
             }
         })

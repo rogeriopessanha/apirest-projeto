@@ -10,11 +10,11 @@
     
     <h1>Loja de games</h1>
 
-    <!-- <h2>Login</h2>
+    <h2>Login</h2>
     <input type="text" name="email" id="email
     " placeholder="Seu email"> <br>
     <input type="text" name="password" id="password" placeholder="*******">
-    <button onclick="login()">Entrar</button> -->
+    <button onclick="login()">Entrar</button>
 
     <hr>
 
@@ -46,24 +46,24 @@
 <script>
     
 
-// function login() {
-//     var emailField = document.getElementById('email')
-//     var passwordField = document.getElementById('password')
+function login() {
+    var emailField = document.getElementById('email')
+    var passwordField = document.getElementById('password')
 
-//     var email = emailField.value
-//     var password = passwordField.value
+    var email = emailField.value
+    var password = passwordField.value
 
-//     axios.post('http://localhost:3000/auth', {
-//         email,
-//         password
-//     })
-//     .then(res => {
-//         alert('LOGADO')
-//     })
-//     .catch(error => {
-//         alert('ERRO AO FAZER O LOGIN')
-//     })
-// }
+    axios.post('http://localhost:3000/auth', {
+        email,
+        password
+    })
+    .then(res => {
+        alert('LOGADO')
+    })
+    .catch(error => {
+        alert('ERRO AO FAZER O LOGIN')
+    })
+}
 
 var axiosConfig = {
     headers: {
@@ -145,39 +145,35 @@ function updateGame() {
 
 axios.get('http://localhost:3000/games', axiosConfig)
 .then(response => {
-    var games = response.data
-    var list = document.getElementById('games')
+    
+    var games = response.data.games;
+    var list = document.getElementById("games")
 
     games.forEach(game => {
+      var item = document.createElement("li");
 
-        var item = document.createElement('li')
+      item.setAttribute("data-id", game.id);
+      item.setAttribute("data-title", game.title);
+      item.setAttribute("data-year", game.year);
+      item.setAttribute("data-price", game.price);
 
-        item.setAttribute('data-id', game.id)
-        item.setAttribute('data-title', game.title)
-        item.setAttribute('data-year', game.year)
-        item.setAttribute('data-price', game.price)
+      item.innerHTML = game.id + " - " + game.title + " - $" + game.price;
 
-        item.innerHTML = game.id + ' - ' + game.title + ' - R$ ' + game.price
+      var deleteBtn = document.createElement("button");
+      deleteBtn.innerHTML = "Delete";
+      deleteBtn.addEventListener("click", function() {
+        deleteGame(item);
+      });
 
-        var deleteBtn = document.createElement('button')
-        deleteBtn.innerHTML = 'Deletar'
-        deleteBtn.addEventListener('click', function() {
-            deleteGame(item)
-        })
+      var editBtn = document.createElement("button");
+      editBtn.innerHTML = "Edit";
+      editBtn.addEventListener("click", function() {
+        loadForm(item);
+      });
 
-        
-        var editBtn = document.createElement('button')
-        editBtn.innerHTML = 'Editar'
-        editBtn.addEventListener('click', function() {
-            loadForm(item)
-        })
-
-
-
-        item.appendChild(deleteBtn)
-        item.appendChild(editBtn)
-
-        list.appendChild(item)
+      item.appendChild(deleteBtn);
+      item.appendChild(editBtn);
+      list.appendChild(item);
     });
 })
 .catch(error => {
