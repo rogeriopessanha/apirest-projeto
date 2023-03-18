@@ -13,7 +13,9 @@
     <h2>Login</h2>
     <input type="text" name="email" id="email
     " placeholder="Seu email"> <br>
+
     <input type="text" name="password" id="password" placeholder="*******">
+
     <button onclick="login()">Entrar</button>
 
     <hr>
@@ -44,6 +46,12 @@
 
 
 <script>
+
+var axiosConfig = {
+    headers: {
+        Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJtYXJpYUB0ZXN0ZS5jb20iLCJpYXQiOjE2NzkxMDQ1NjYsImV4cCI6MTY4MDE4NDU2Nn0.chgArm79R4IquHlRRh3A4KODBUQePd9OTNFpEq3wBnk"
+    }
+}
     
 
 function login() {
@@ -56,20 +64,14 @@ function login() {
     axios.post('http://localhost:3000/auth', {
         email,
         password
-    })
-    .then(res => {
+    }).then(res => {
         alert('LOGADO')
-    })
-    .catch(error => {
+    }).catch(error => {
         alert('ERRO AO FAZER O LOGIN')
     })
 }
 
-var axiosConfig = {
-    headers: {
-        Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJtYXJpYUB0ZXN0ZS5jb20iLCJpYXQiOjE2Nzg5MzMxNjYsImV4cCI6MTY4MDAxMzE2Nn0.shpRlpSBIza73FNR1prN0hyQQwYFs6wrVQhEqOhDyuc"
-    }
-}
+
 
 function createGame() {
     var titleInput = document.getElementById('title')
@@ -146,7 +148,7 @@ function updateGame() {
 axios.get('http://localhost:3000/games', axiosConfig)
 .then(response => {
     
-    var games = response.data.games;
+    var games = response.data;
     var list = document.getElementById("games")
 
     games.forEach(game => {
