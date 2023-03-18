@@ -48,7 +48,7 @@
 
 var axiosConfig = {
     headers: {
-        Authorization: "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJtYXJpYUB0ZXN0ZS5jb20iLCJpYXQiOjE2NzkxMDQ1NjYsImV4cCI6MTY4MDE4NDU2Nn0.chgArm79R4IquHlRRh3A4KODBUQePd9OTNFpEq3wBnk"
+        Authorization: "Bearer " + localStorage.getItem('token')
     }
 }
     
@@ -64,9 +64,11 @@ function login() {
         email,
         password
     }).then(res => {
-        alert('LOGADO')
+        var token = res.data.token
+        localStorage.setItem('token', token)
+        axiosConfig.headers.Authorization = "Bearer " + localStorage.getItem('token')
     }).catch(error => {
-        alert('ERRO AO FAZER O LOGIN')
+        alert('SENHA ERRADA')
     })
 }
 
@@ -83,7 +85,7 @@ function createGame() {
         price: priceInput.value
     }
 
-    axios.post('http://localhost:3000/game', game)
+    axios.post('http://localhost:3000/game', game, axiosConfig)
     .then(response => {
         if (response.status == 200) {
             alert('Jogo cadastrado com sucesso')
@@ -97,7 +99,7 @@ function createGame() {
 
 function deleteGame(listItem) {
     var id = listItem.getAttribute('data-id')
-    axios.delete('http://localhost:3000/game/'+id).then(response => {
+    axios.delete('http://localhost:3000/game/'+id, axiosConfig).then(response => {
         alert('Jogo deletado')
     })
     .catch( error => {
@@ -131,7 +133,7 @@ function updateGame() {
 
     var id = idInput.value
 
-    axios.put('http://localhost:3000/game/'+id, game)
+    axios.put('http://localhost:3000/game/'+id, game, axiosConfig)
     .then(response => {
         if (response.status == 200) {
             alert('Jogo atualizado com sucesso')
