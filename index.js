@@ -178,44 +178,77 @@ app.put('/game/:id', (req, res) => {
     }
 })
 
-app.post('/auth', (req, res) => {
+// app.post('/auth', (req, res) => {
 
-    var { email, password } = req.body
+//     var { email, password } = req.body
 
-    if (email != undefined) {
+//     if (email != undefined) {
 
-        var user = DB.users.find(u => u.email == email)
+//         var user = DB.users.find(u => u.email == email)
 
-        if (user != undefined) {
-            if (user.password == password) {
+//         if (user != undefined) {
+//             if (user.password == password) {
 
-                jwt.sign({ id: user.id, email: user.email }, JWTSecret, { expiresIn: '300h' }, (error, token) => {
-                    if (error) {
-                        res.status(400)
-                        res.json({ error: 'falha interna' })
-                    } else {
-                        res.status(200)
-                        res.json({ token: token })
+//                 jwt.sign({ id: user.id, email: user.email }, JWTSecret, { expiresIn: '300h' }, (error, token) => {
+//                     if (error) {
+//                         res.status(400)
+//                         res.json({ error: 'falha interna' })
+//                     } else {
+//                         res.status(200)
+//                         res.json({ token: token })
+//                     }
+//                 })
+
+//             } else {
+//                 res.status(401)
+//                 res.json({ error: 'informação invalida' })
+//             }
+
+
+//         } else {
+//             res.status(404)
+//             res.json({ error: 'O email enviado não existe na basa de dados' })
+//         }
+
+
+//     } else {
+//         res.status(400)
+//         res.json({ error: 'O email enviado é invalido' })
+//     }
+// })
+
+app.post("/auth",(req, res) => {
+
+    var {email, password} = req.body;
+
+    if(email != undefined){
+
+        var user = DB.users.find(u => u.email == email);
+        if(user != undefined){
+            if(user.password == password){
+                jwt.sign({id: user.id, email: user.email},JWTSecret,{expiresIn:'48h'},(err, token) => {
+                    if(err){
+                        res.status(400);
+                        res.json({err:"Falha interna"});
+                    }else{
+                        res.status(200);
+                        res.json({token: token});
                     }
                 })
-
-            } else {
-                res.status(401)
-                res.json({ error: 'informação invalida' })
+            }else{
+                res.status(401);
+                res.json({err: "Credenciais inválidas!"});
             }
-
-
-        } else {
-            res.status(404)
-            res.json({ error: 'O email enviado não existe na basa de dados' })
+        }else{
+            res.status(404);
+            res.json({err: "O E-mail enviado não existe na base de dados!"});
         }
 
-
-    } else {
-        res.status(400)
-        res.json({ error: 'O email enviado é invalido' })
+    }else{
+        res.status(400);
+        res.send({err: "O E-mail enviado é inválido"});
     }
-})
+});
 
 
 
