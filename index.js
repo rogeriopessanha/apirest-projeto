@@ -94,21 +94,49 @@ var DB = {
 }
 
 app.get('/games', auth, (req, res) => {
+
+
     res.statusCode = 200
-    res.json(DB.games );
+    res.json(DB.games);
 })
 
 app.get('/game/:id', auth, (req, res) => {
+    
     if (isNaN(req.params.id)) {
         res.sendStatus(400)
     } else {
+
         var id = parseInt(req.params.id)
+
+        var HATEOAS = [
+            {
+                href: 'http://localhost:3000/game/'+id,
+                method: 'DELETE',
+                rel: 'deleta_game'
+            },
+            {
+                href: 'http://localhost:3000/game/'+id,
+                method: 'PUT',
+                rel: 'edit_game'
+            },
+            {
+                href: 'http://localhost:3000/game/'+id,
+                method: 'GET',
+                rel: 'get_game'
+            },
+            {
+                href: 'http://localhost:3000/game',
+                method: 'GET',
+                rel: 'get_all_games'
+            }
+        ]
 
         var game = DB.games.find(g => g.id == id)
 
         if (game != undefined) {
             res.statusCode = 200
-            res.json(game)
+            res.json({game, _links: HATEOAS})
+            // res.json(game)
         } else {
             res.sendStatus(404)
         }
@@ -178,44 +206,6 @@ app.put('/game/:id', (req, res) => {
     }
 })
 
-// app.post('/auth', (req, res) => {
-
-//     var { email, password } = req.body
-
-//     if (email != undefined) {
-
-//         var user = DB.users.find(u => u.email == email)
-
-//         if (user != undefined) {
-//             if (user.password == password) {
-
-//                 jwt.sign({ id: user.id, email: user.email }, JWTSecret, { expiresIn: '300h' }, (error, token) => {
-//                     if (error) {
-//                         res.status(400)
-//                         res.json({ error: 'falha interna' })
-//                     } else {
-//                         res.status(200)
-//                         res.json({ token: token })
-//                     }
-//                 })
-
-//             } else {
-//                 res.status(401)
-//                 res.json({ error: 'informação invalida' })
-//             }
-
-
-//         } else {
-//             res.status(404)
-//             res.json({ error: 'O email enviado não existe na basa de dados' })
-//         }
-
-
-//     } else {
-//         res.status(400)
-//         res.json({ error: 'O email enviado é invalido' })
-//     }
-// })
 
 app.post("/auth",(req, res) => {
 
